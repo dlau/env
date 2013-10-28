@@ -1,0 +1,13 @@
+{
+	"color_scheme": "Packages/Color Scheme - Default/Cobalt.tmTheme",
+	"draw_white_space": "all",
+	"ignored_packages":
+	[
+		"vintage"
+	],
+	"tab_size": 4,
+	"translate_tabs_to_spaces": 1,
+	"vintageous_start_in_command_mode": true,
+    "font_size": 13,
+    "font_face" : "Monaco"
+}
