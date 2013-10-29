@@ -1,14 +1,20 @@
 {
 	"installed_packages":
 	[
+		"Alignment",
 		"BracketHighlighter",
+		"EasyMotion",
 		"Emmet",
+		"JsFormat",
 		"LESS",
+		"Nodejs",
+		"Origami",
 		"SCSS",
 		"SideBarEnhancements",
 		"SublimeCodeIntel",
 		"sublimelint",
 		"Surround",
+		"tern_for_sublime",
 		"Theme - Soda",
 		"Vintageous",
 		"VintageousOrigami"
