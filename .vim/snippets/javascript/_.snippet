@@ -1,0 +1,23 @@
+#Generic js snippets
+
+snippet us
+    'use strict';
+
+snippet require
+    require('${1}');
+
+snippet v
+    var ${1} = ${0}
+
+snippet vr
+    var ${1:VariableName} = require('${2:ModuleName}');
+    ${0}
+
+snippet nc
+    new ${1:ClassName}(${0});
+
+snippet proto
+    ${1:ClassName}.prototype.{$2:FunctionName} = function \* (${3:args}) {
+        ${0}
+    };
+    \n

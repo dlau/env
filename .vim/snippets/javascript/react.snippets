@@ -1,0 +1,63 @@
+snippet rcls
+	var ${1:ClassName} = React.createClass({
+		getInitialState : function(){
+			return {
+			};
+		},
+		getDefaultProps : function(){
+			return {
+			};
+		},
+		render : function(){
+			return (
+				${0}
+			);
+		}
+	});
+	
+
+snippet rbp
+	/** @jsx React.DOM */
+
+	/*NPM includes*/
+	var React = require('react');
+
+	/*Local components*/
+	${0}
+	var ${1:ClassName} = React.createClass({
+		getInitialState : function(){
+			return {
+			};
+		},
+		getDefaultProps : function(){
+			return {
+			};
+		},
+		render : function(){
+			return (
+				${0}
+			);
+		}
+	});
+
+	module.exports = $1;
+
+snippet ds
+	<div className="${1:classname}">
+		${0}
+	</div>
+
+snippet dv
+	<div className={${1:classname}}>
+		${0}
+	</div>
+
+snippet ns node static
+	<${1:tag} className="${2:classname}">
+		${0}
+	</$1>
+
+snippet nv node variable
+	<${1:tag} className={${2:classname}}>
+		${0}
+	</$1>

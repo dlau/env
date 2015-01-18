@@ -1,17 +1,9 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Sets how many lines of history VIM has to remember
-"
 set guifont=Menlo:h15
-set tabstop=4
-set expandtab
 set history=700
 set number
-
-" Enable filetype plugins
-filetype plugin on
-filetype indent on
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -84,6 +76,10 @@ set foldcolumn=1
 syntax enable 
 
 
+" Default color scheme
+colors jellybeans
+let g:jellybeans_use_lowcolor_black = 0
+
 " Set extra options when running in GUI mode
 if has("gui_running")
     set guioptions-=T
@@ -92,7 +88,6 @@ if has("gui_running")
     set guitablabel=%M\ %t
 endif
 
-colors phd
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
 
@@ -112,6 +107,8 @@ set noswapfile
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set listchars=tab:>-,trail:·,extends:>,precedes:<
+set list
 " Use spaces instead of tabs
 set expandtab
 
@@ -130,48 +127,15 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
-
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
-" Visual mode pressing * or # searches for the current selection
-" Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :call VisualSelection('f', '')<CR>
-vnoremap <silent> # :call VisualSelection('b', '')<CR>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
 map k gk
 
-" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
-map <c-space> ?
-
-" Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
-
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
-" Close the current buffer
-map <leader>bd :Bclose<cr>
-
-" Close all the buffers
-map <leader>ba :1,1000 bd!<cr>
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove 
-map <leader>t<leader> :tabnext 
+map <leader>t<leader> :tabnext
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -225,112 +189,193 @@ endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Misc
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
-" Quickly open a buffer for scripbble
-map <leader>q :e ~/buffer<cr>
+if has('vim_starting')
+  set nocompatible               " Be iMproved
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
 
-execute pathogen#infect()
-autocmd BufReadPre *.js let b:javascript_lib_use_jquery = 1
-autocmd FileType jade setlocal shiftwidth=2 tabstop=2
+ call neobundle#rc(expand('~/.vim/bundle/'))
+
+" Let NeoBundle manage NeoBundle
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+
+" Plugins {{{
+NeoBundle 'Shougo/vimproc', {
+      \ 'build' : {
+      \     'mac' : 'make -f make_mac.mak',
+      \    },
+      \ }
+
+" Layout
+NeoBundleLazy "groenewege/vim-less",  {'autoload':{'filetypes':['less']}}
+NeoBundleLazy "digitaltoad/vim-jade",  {'autoload':{'filetypes':['jade']}}
+NeoBundle "xolox/vim-misc"
+NeoBundle "ap/vim-css-color"
+NeoBundle "nathanaelkane/vim-indent-guides"
+NeoBundle "ntpeters/vim-better-whitespace"
+
+" Navigation
+NeoBundle "Shougo/vimfiler.vim"
+NeoBundle 'Shougo/unite.vim'
+NeoBundle "Shougo/unite-outline"
+
+" Completion
+NeoBundle "Shougo/neocomplete.vim"
+NeoBundle "tpope/vim-repeat"
+NeoBundle 'shougo/vimshell'
+
+"Macro
+NeoBundle "junegunn/vim-easy-align"
+NeoBundle "scrooloose/nerdcommenter"
+NeoBundle "tpope/vim-unimpaired"
+NeoBundle "Shougo/neosnippet.vim"
+NeoBundle "tpope/vim-surround"
+NeoBundleLazy "dlau/vim-jsdoc", {'autoload':{'filetypes':['javascript']}}
+NeoBundle "mattn/emmet-vim/"
+NeoBundle "tommcdo/vim-exchange"
+NeoBundle "AndrewRadev/switch.vim"
+
+" Checkers
+NeoBundle "scrooloose/syntastic" 
+
+"Tool
+NeoBundle "tpope/vim-fugitive"
+NeoBundle "edkolev/promptline.vim"
+NeoBundle "pangloss/vim-javascript"
+filetype plugin indent on     " Required!
+
+NeoBundleCheck
 
 set backspace=eol,start,indent         " backspace in insert mode works like normal editor
-set number              " line numbers
 
 let g:Powerline_symbols = 'fancy' 
 imap jk <Esc>
-set colorcolumn=80
+"imap jl <Esc>$i
+"imap jo <Esc>o
+"imap je <Esc>A;<Esc>o
+"imap jc <Esc>A,<Esc>o
+
+set colorcolumn=90
+
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_prompt =  '$ '
+
+"Emmet
+let g:user_emmet_leader_key='<C-a>'
+
+"JSDoc
+nmap -- :JsDoc <cr>
 
 "Syntastic Config
 
 let g:syntastic_python_checkers=['flake8']
 let g:syntastic_javascript_checkers=['jshint']
 
+"Neosnippet config
+let g:neosnippet#enable_snipmate_compatibility = 1
+let g:neosnippet#snippets_directory = '~/.vim/snippets/'
+imap <expr><C-]> (pumvisible() ? "\<C-y>":"")."\<Plug>(neosnippet_expand_or_jump)"
+nmap <expr><C-]> (pumvisible() ? "\<C-y>":"")."\<Plug>(neosnippet_expand_or_jump)"
 
-"Unite.vim
-let g:unite_source_file_rec_max_cache_files = 0
-call unite#custom#source('file_mru,file_rec,file_rec/async,grepocate',
-        \ 'max_candidates', 0)
-call unite#custom#source('file_mru,file_rec,file_rec/async,grepocate',
-        \ 'ignore_pattern', '/node_modules/')
+"Unite.vim plugin configuration
+"TODO: Make project specific
+"Greppers
+if executable('ag')
+    let g:unite_source_grep_command='ag'
+    let g:unite_source_grep_default_opts='--nocolor --nogroup --hidden'
+    let g:unite_source_grep_recursive_opt=''
+elseif executable('ack')
+    let g:unite_source_grep_command = 'ack'
+    let g:unite_source_grep_default_opts = '--no-heading --no-color -a'
+    let g:unite_source_grep_recursive_opt = ''
+endif
 
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
-nnoremap <leader>f :<C-u>Unite -start-insert file_rec/async:!<CR>
 
+
+let g:unite_source_rec_async_command= 'ag --nocolor --nogroup --hidden -g ""'
+
+call unite#custom#source(
+    \ 'file_rec/async,grep',
+    \ 'ignore_pattern',
+    \ join(['^cache\/','^\.\S*/','\/\.\S*/','\.git/', 'node_modules/', 'assets/images', 'assets/addons'], '\|')
+\)
+call unite#custom#source(
+    \ 'buffer,file,file_rec,grep',
+    \ 'sorters', ['sorter_rank', 'sorter_reverse'])
+
+let g:unite_source_file_rec_max_cache_files = 0
+call unite#custom#source('file_rec,file_rec/async,grepocate',
+        \ 'max_candidates', 0)
+
+
+function! s:unite_settings()
+    nmap <buffer> Q <plug>(unite_exit)
+    nmap <buffer> <esc> <plug>(unite_exit)
+    imap <buffer> <esc> <plug>(unite_exit)
+endfunction
+
+let g:unite_source_history_yank_enable = 1
+
+nnoremap <leader>f :<C-u>Unite -auto-resize -start-insert buffer file_rec/async:!<cr>
+nnoremap <leader>b :<C-u>Unite -auto-resize -buffer-name=buffers  buffer_tab<cr>
+nnoremap <leader>y :<C-u>Unite history/yank<cr>
+nnoremap <leader>] :<C-u>Unite -vertical outline <cr>
+
+nnoremap <leader>g :<C-u>Unite -vertical -no-quit -buffer-name=grepbuffer grep:.<cr>
+nnoremap <leader>gg :<C-u>UniteResume -vertical grepbuffer<cr>
+nnoremap <leader>gf :<C-u>Unite -vertical -no-quit -buffer-name=grepbuffer grep:%<cr>
+nnoremap <leader>ga :<C-u>Unite -vertical -no-quit -buffer-name=grepbuffer grep:$<cr>
+
+let g:unite_source_menu_menus = {}
+
+"Disable Auto commenting
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 "Toggle comment off/on
-noremap<F1> :call NERDComment(0,"toggle")<C-m>
+
+noremap <C-\>  :VimFilerExplorer<cr>
+map <F1> <plug>NERDCommenterToggle
 
 "Neocomplete
-"Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-" Disable AutoComplPop.
+let g:neocomplete#enable_auto_select = 1
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
+
 " Use smartcase.
 let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#sources#syntax#min_keyword_length = 2
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
 " Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
+"let g:neocomplete#sources#dictionary#dictionaries = {
+"    \ 'default' : '',
+"    \ 'vimshell' : $HOME.'/.vimshell_hist',
+"    \ }
 
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
+let g:tern#is_show_argument_hints_enabled = 1
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
+  return neocomplete#cancel_popup() . "\<CR>"
+  "" For no inserting <CR> key.
   "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
 endfunction
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
 
-" For cursor moving in insert mode(Not recommended)
-"inoremap <expr><Left>  neocomplete#close_popup() . "\<Left>"
-"inoremap <expr><Right> neocomplete#close_popup() . "\<Right>"
-"inoremap <expr><Up>    neocomplete#close_popup() . "\<Up>"
-"inoremap <expr><Down>  neocomplete#close_popup() . "\<Down>"
-" Or set this.
-"let g:neocomplete#enable_cursor_hold_i = 1
-" Or set this.
-"let g:neocomplete#enable_insert_char_pre = 1
+if !exists('g:neocomplete#force_omni_input_patterns')
+      let g:neocomplete#force_omni_input_patterns = {}
+  endif
+"let g:neocomplete#force_omni_input_patterns.javascript = '[^. \t]\.\w*'
 
-" AutoComplPop like behavior.
-"let g:neocomplete#enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplete#enable_auto_select = 1
-"let g:neocomplete#disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -343,15 +388,74 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
-"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"Do not use smartindent for non curly braced languages
+au! FileType python setl nosmartindent
+au! FileType jade setl nosmartindent
 
-"End Neocomplete
+function! AddEmptyLineBelow()
+  call append(line("."), "")
+endfunction
 
-noremap <C-\> :NERDTreeToggle<CR>
-au! BufWritePost .vimrc source %
+function! AddEmptyLineAbove()
+  let l:scrolloffsave = &scrolloff
+  " Avoid jerky scrolling with ^E at top of window
+  set scrolloff=0
+  call append(line(".") - 1, "")
+  if winline() != winheight(0)
+    silent normal! <C-e>
+  end
+  let &scrolloff = l:scrolloffsave
+endfunction
+
+function! DelEmptyLineBelow()
+  if line(".") == line("$")
+    return
+  end
+  let l:line = getline(line(".") + 1)
+  if l:line =~ '^\s*$'
+    let l:colsave = col(".")
+    .+1d
+    ''
+    call cursor(line("."), l:colsave)
+  end
+endfunction
+
+function! DelEmptyLineAbove()
+  if line(".") == 1
+    return
+  end
+  let l:line = getline(line(".") - 1)
+  if l:line =~ '^\s*$'
+    let l:colsave = col(".")
+    .-1d
+    silent normal! <C-y>
+    call cursor(line("."), l:colsave)
+  end
+endfunction
+
+noremap <silent> <C-o> :call AddEmptyLineAbove()<CR>
+noremap <silent> <C-l> :call AddEmptyLineBelow()<CR>
+
+nnoremap <space> zA
+set ssop-=options    " do not store global and local values in a session
+
+let g:session_autosave='no'
+let g:session_autoload='no'
+
+nmap ` :nohl<CR>
+
+let g:cssColorVimDoNotMessMyUpdatetime = 1
+
+nnoremap t :tabnext<CR>
+nnoremap T :tabprevious<CR>
+nnoremap <C-t> :tabnew<CR>
+
+let javascript_enable_domhtmlcss = 1
+
+
+autocmd FileType javascript setlocal suffixesadd+=.js
+let g:indent_guides_enable_on_vim_startup=1
+
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+nnoremap - :Switch<cr>

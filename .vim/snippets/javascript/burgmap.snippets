@@ -1,0 +1,33 @@
+#ModelGlobals
+
+snippet mgeo
+	ModelGlobals.execOne(${1})
+
+snippet mgem
+	ModelGlobals.execMany(${1})
+
+snippet mgeor
+	ModelGlobals.execManyRaw(${1})
+
+snippet mgemr
+	ModelGlobals.execManyRaw(${1})
+
+snippet mgs
+	ModelGlobals.knex('${1}')
+		.select(${2})
+		.where(${3})
+		${0}
+snippet mgu
+	ModelGlobals.knex('${1}')
+		.update(${2})
+		.where(${3})
+		${0}
+snippet mgd
+	ModelGlobals.knex('${1}')
+		.del(${2})
+		.where(${3})
+		${0}
+snippet mgi
+	ModelGlobals.knex('${1}')
+		.insert(${2})
+		${0}

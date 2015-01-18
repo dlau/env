@@ -1,0 +1,13 @@
+#Waterfall
+snippet aswf
+	async.waterfall([
+		function(cb){
+            ${1://body}
+		},${0}
+	],function(err, res){
+	});
+
+snippet aswf2
+	function(${1: retval}, cb){
+		${2://body}
+	},${0}
